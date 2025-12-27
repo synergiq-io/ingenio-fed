@@ -1,0 +1,29 @@
+{
+  "name": "synergiq-crm-backend",
+  "version": "1.0.0",
+  "description": "Multi-tenant CRM backend for Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create synergiq-crm",
+    "db:migrate": "wrangler d1 execute synergiq-crm --file=./schema.sql",
+    "db:seed": "wrangler d1 execute synergiq-crm --file=./seed.sql",
+    "db:local": "wrangler d1 execute synergiq-crm --local --file=./schema.sql",
+    "tail": "wrangler tail",
+    "test": "vitest"
+  },
+  "keywords": ["cloudflare", "workers", "crm", "multi-tenant"],
+  "author": "Synergiq",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.0.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "wrangler": "^3.22.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}
