@@ -1,10 +1,10 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import * as Icons from 'lucide-react';
 
 // ============================================================================
-// API CLIENT
+// API CLIENT (Same as before)
 // ============================================================================
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
@@ -33,7 +33,7 @@ api.interceptors.response.use(
 );
 
 // ============================================================================
-// AUTH CONTEXT
+// AUTH CONTEXT (Same as before)
 // ============================================================================
 
 interface User {
@@ -105,7 +105,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 // ============================================================================
-// LOGIN PAGE
+// LOGIN PAGE (Same as before - keeping it simple)
 // ============================================================================
 
 function LoginPage() {
@@ -154,7 +154,7 @@ function LoginPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mb-4 shadow-2xl">
-            <Icons.Sparkles className="w-10 h-10 text-white" />
+            <Icons.Database className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Synergiq CRM</h1>
           <p className="text-slate-300">AI-Powered Proposal Platform</p>
@@ -374,98 +374,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 }
 
 // ============================================================================
-// DASHBOARD PAGE
-// ============================================================================
-
-function DashboardPage() {
-  const [kpis, setKpis] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
-  const loadDashboard = async () => {
-    try {
-      const response = await api.get('/api/dashboard/kpis');
-      setKpis(response.data);
-    } catch (error) {
-      console.error('Failed to load dashboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>;
-  }
-
-  const kpiCards = [
-    {
-      title: 'Total Revenue',
-      value: `$${((kpis?.totalRevenue || 0) / 1000000).toFixed(1)}M`,
-      icon: Icons.DollarSign,
-      color: 'blue',
-    },
-    {
-      title: 'Open Opportunities',
-      value: kpis?.openOpportunities || 0,
-      icon: Icons.Target,
-      color: 'green',
-    },
-    {
-      title: 'Win Rate',
-      value: `${(kpis?.winRate || 0).toFixed(1)}%`,
-      icon: Icons.Award,
-      color: 'purple',
-    },
-    {
-      title: 'Pipeline Value',
-      value: `$${((kpis?.pipelineValue || 0) / 1000000).toFixed(1)}M`,
-      icon: Icons.TrendingUp,
-      color: 'orange',
-    },
-  ];
-
-  const colors: any = {
-    blue: 'from-blue-500 to-cyan-500',
-    green: 'from-green-500 to-emerald-500',
-    purple: 'from-purple-500 to-pink-500',
-    orange: 'from-orange-500 to-red-500',
-  };
-
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
-        <p className="text-slate-600">Welcome back! Here's your business overview.</p>
-      </div>
-
-      <div className="grid grid-cols-4 gap-6">
-        {kpiCards.map((kpi, idx) => {
-          const Icon = kpi.icon;
-          return (
-            <div
-              key={idx}
-              className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl transition-all"
-            >
-              <div
-                className={`w-14 h-14 bg-gradient-to-br ${colors[kpi.color]} rounded-xl flex items-center justify-center shadow-lg mb-4`}
-              >
-                <Icon className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-3xl font-bold text-slate-900 mb-1">{kpi.value}</h3>
-              <p className="text-sm text-slate-600 font-medium">{kpi.title}</p>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// OPPORTUNITIES PAGE (WITH CREATE MODAL!)
+// ENHANCED OPPORTUNITIES PAGE WITH CREATE MODAL
 // ============================================================================
 
 function OpportunitiesPage() {
@@ -655,8 +564,14 @@ function OpportunitiesPage() {
   );
 }
 
+// ... Continue in next file due to length ...
 // ============================================================================
-// SAM.GOV PAGE
+// PART 2 - SAM.GOV, PROPOSALS, BOILERPLATES PAGES
+// Add these to your App.tsx after Part 1
+// ============================================================================
+
+// ============================================================================
+// SAM.GOV CONFIGURATION PAGE
 // ============================================================================
 
 function SAMGovPage() {
@@ -934,8 +849,7 @@ function ProposalsPage() {
         opportunityId: formData.opportunityId || null,
       });
       setShowCreateModal(false);
-      alert(`Proposal created! ID: ${response.data.id}`);
-      loadProposals();
+      navigate(`/proposals/${response.data.id}`);
     } catch (error) {
       console.error('Failed to create proposal:', error);
     }
@@ -990,6 +904,7 @@ function ProposalsPage() {
           {proposals.map((proposal) => (
             <div
               key={proposal.id}
+              onClick={() => navigate(`/proposals/${proposal.id}`)}
               className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all cursor-pointer"
             >
               <div className="flex items-start justify-between mb-4">
@@ -1310,9 +1225,97 @@ function BoilerplatesPage() {
 }
 
 // ============================================================================
-// PLACEHOLDER PAGES
+// DASHBOARD & OTHER PAGES (Keep existing ones)
 // ============================================================================
 
+function DashboardPage() {
+  const [kpis, setKpis] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const loadDashboard = async () => {
+    try {
+      const response = await api.get('/api/dashboard/kpis');
+      setKpis(response.data);
+    } catch (error) {
+      console.error('Failed to load dashboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-64">Loading...</div>;
+  }
+
+  const kpiCards = [
+    {
+      title: 'Total Revenue',
+      value: `$${((kpis?.totalRevenue || 0) / 1000000).toFixed(1)}M`,
+      icon: Icons.DollarSign,
+      color: 'blue',
+    },
+    {
+      title: 'Open Opportunities',
+      value: kpis?.openOpportunities || 0,
+      icon: Icons.Target,
+      color: 'green',
+    },
+    {
+      title: 'Win Rate',
+      value: `${(kpis?.winRate || 0).toFixed(1)}%`,
+      icon: Icons.Award,
+      color: 'purple',
+    },
+    {
+      title: 'Pipeline Value',
+      value: `$${((kpis?.pipelineValue || 0) / 1000000).toFixed(1)}M`,
+      icon: Icons.TrendingUp,
+      color: 'orange',
+    },
+  ];
+
+  const colors: any = {
+    blue: 'from-blue-500 to-cyan-500',
+    green: 'from-green-500 to-emerald-500',
+    purple: 'from-purple-500 to-pink-500',
+    orange: 'from-orange-500 to-red-500',
+  };
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+        <p className="text-slate-600">Welcome back! Here's your business overview.</p>
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        {kpiCards.map((kpi, idx) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl transition-all"
+            >
+              <div
+                className={`w-14 h-14 bg-gradient-to-br ${colors[kpi.color]} rounded-xl flex items-center justify-center shadow-lg mb-4`}
+              >
+                <Icon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold text-slate-900 mb-1">{kpi.value}</h3>
+              <p className="text-sm text-slate-600 font-medium">{kpi.title}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Placeholder pages
 function CapturesPage() {
   return (
     <div>
@@ -1341,7 +1344,7 @@ function CompaniesPage() {
 }
 
 // ============================================================================
-// APP ROUTES
+// APP ROUTES - UPDATE WITH NEW PAGES
 // ============================================================================
 
 function AppRoutes() {
@@ -1387,6 +1390,7 @@ function AppRoutes() {
   );
 }
 
+// Main App export same as before
 // ============================================================================
 // MAIN APP
 // ============================================================================
