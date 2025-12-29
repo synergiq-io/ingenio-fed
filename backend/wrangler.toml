@@ -1,23 +1,25 @@
 name = "synergiq-crm-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
-node_compat = true
+compatibility_flags = ["nodejs_compat"]
 
 [observability]
 enabled = true
+
+# Variables
+[vars]
+ENVIRONMENT = "production"
+ALLOWED_ORIGINS = "*"  # Change to your frontend domain in production
 
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
 database_name = "synergiq-crm"
-database_id = "" # Will be filled after running: wrangler d1 create synergiq-crm
+database_id = "3b84fede-2e10-4372-8250-b6fe0226ccf0" # Fill this after running: wrangler d1 create synergiq-crm
 
-# Environment Variables (Secrets - set via CLI)
+# Secrets (set via CLI):
 # wrangler secret put JWT_SECRET
 # wrangler secret put ENCRYPTION_KEY
-
-[vars]
-ENVIRONMENT = "production"
 
 # Development environment
 [env.development]
@@ -36,7 +38,3 @@ vars = { ENVIRONMENT = "staging" }
 binding = "DB"
 database_name = "synergiq-crm-staging"
 database_id = ""
-
-# CORS settings
-[vars]
-ALLOWED_ORIGINS = "*"  # Change to your frontend domain in production
